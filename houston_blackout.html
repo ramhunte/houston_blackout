@@ -12,7 +12,7 @@
 <meta name="author" content="Raymond Hunter" />
 
 
-<title>A spatial Analysis of Houston Blackouts</title>
+<title>A spatial Analysis of Houston Blackouts and the Communtiies it Affected</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -455,8 +455,8 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">A spatial Analysis of Houston
-Blackouts</h1>
+<h1 class="title toc-ignore">A spatial Analysis of Houston Blackouts and
+the Communtiies it Affected</h1>
 <h4 class="author">Raymond Hunter</h4>
 <h4 class="date">12-14-2023</h4>
 
@@ -465,14 +465,33 @@ Blackouts</h1>
 
 <div id="background" class="section level2">
 <h2>Background</h2>
-<p>“In February 2021, the state of Texas suffered a major power crisis,
-which came about as a result of three severe winter storms sweeping
-across the United States on February 10–11, 13–17, and 15–20.”<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
-<p>The goal of this analysis is to find and estimate the total number of
-houses in Houston that lost power from the first two stomrs that hit in
-2021. Specifically, I am investigating if socioeconomic factors are
-important predictors of a communitie’s recovery following a power
-outage.</p>
+<p>Natural disasters oftentimes occur unpredictably and rapidly, and the
+severity of them can vary widely. Specifically in the Southern United
+States, major storms (like Hurricane Katrina) can have devestating and
+long lasting consequences on communities. “In February 2021, the state
+of Texas suffered a major power crisis, which came about as a result of
+three severe winter storms sweeping across the United States on February
+10–11, 13–17, and 15–20.”<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+</div>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>The goal of this study is to try and answer the question: <strong>How
+did blackouts from the Houston 2021 storms affect the citie’s
+communities, and did the socioeconomic status of these communities play
+a role in determining which communities experienced blackouts?</strong>
+Other studies have shown that not only do lower socioeconomic status
+communities experience more intense consequences of natural disaster,
+but they also don’t always recieve the same degree of aid following
+one.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<p>By identifying the total number of houses in Houston that lost power
+from the first two storms that hit in 2021 and overlaying socioeconomic
+data to these homes to see if median income varied across homes that
+experienced blackouts, we can begin to look at these underlying
+patterns. These types of studies are becoming critically important as
+climate change continues to increase the frequency of severe storms
+including intense precipitation events throughout Texas.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> as not all communities
+are affected the same. We need to look at how communities of varying
+socioeconomic status are impacted as a result.</p>
 </div>
 <div id="approach" class="section level2">
 <h2>Approach</h2>
@@ -480,31 +499,39 @@ outage.</p>
 storms to estimate power outages. Data was acquired from the <a href="https://en.wikipedia.org/wiki/Visible_Infrared_Imaging_Radiometer_Suite">Visible
 Infrared Imaging Radiometer Suite (VIIRS)</a> from the Suomi satellite.
 I used the VNP46A1 tolook for variation in night lights before and after
-the storm as a way ofidentifying areas that lost electric power as a
+the storm as a way of identifying areas that lost electric power as a
 result of the storms. Furthermore, data containing the physical
-perimiters of buildings and roads is needed to spatially join to areas
-that lost power. I gathered this data from <a href="https://www.openstreetmap.org/#map=4/38.01/-95.84">OpenStreetMap</a>
-providning high resolution data on this. Finally, we need to join this
-data with socioeconomic factor data that influenced recovery, so I
-pulled relating data from the US Census Bureau (see <code>Readme</code>
-file).</p>
-<p>Some of the most important tools in carryign out this analysis
-incldue: * loading vector/raster data * raster operations * vector
-operations * spatial joins</p>
+boundaires and area of buildings and roads is needed to spatially join
+to areas that lost power. I gathered this data from <a href="https://www.openstreetmap.org/#map=4/38.01/-95.84">OpenStreetMap</a>
+providing high resolution data on the structural layout of the city.
+Finally, we need to join this data with socioeconomic factor data
+pertaining to all the communities in Houston affected by the blackouts.
+I pulled this data from the US Census Bureau (see <code>Readme</code>
+file) that shows block group county level information on various
+socioeconomic characterisitcs.</p>
+<p>These types of analysis require a variety of different tools to carry
+out from satellite images and census data to finalized maps. Some of the
+most important tools in carrying out this analysis include: * loading,
+transforming, and wrangling vector/raster data * raster operations to
+identify blackout areas from satellite imagery * vector operations to
+isolate affected buildings and remove interference (road lights) *
+spatial joins of regions experiencing blackouts and the total number of
+untis within them</p>
 <div id="data" class="section level3">
 <h3>Data</h3>
 <div id="night-lights" class="section level4">
 <h4>Night lights</h4>
-<p>Using NASA’s Worldview to find data pre and post storm, I found that
-satellite images on 2021-02-07 and 2021-02-16 provided two clear,
-contrasting images to visualize the extent of the power outage in Texas.
-VIIRS data is distributed through NASA’s <a href="https://ladsweb.modaps.eosdis.nasa.gov/">Level-1 and Atmospheric
+<p>Using NASA’s Worldview to find data pre and post storm, I found
+satellite images recorded on 2021-02-07 and 2021-02-16 that provided two
+clear, contrasting images to visualize the extent of the power outage in
+Texas. VIIRS data is distributed through NASA’s <a href="https://ladsweb.modaps.eosdis.nasa.gov/">Level-1 and Atmospheric
 Archive &amp; Distribution System Distributed Active Archive Center
 (LAADS DAAC)</a>. Many NASA Earth data products are distributed in 10x10
 degree tiles in sinusoidal equal-area projection that are identified by
 their horizontal and vertical position in the grid. Houston lies on the
 border of tiles h08v05 and h08v06, and so I downloaded two tiles per
-date. These data are stored in the <code>VNP46A1</code> folder:</p>
+date to ensure the whole city was being included. These data are stored
+in the <code>VNP46A1</code> folder:</p>
 <ul>
 <li><code>VNP46A1.A2021038.h08v05.001.2021039064328.h5.tif</code>: tile
 h08v05, collected on 2021-02-07<br />
@@ -521,8 +548,9 @@ h08v06, collected on 2021-02-16</li>
 </div>
 <div id="roads" class="section level4">
 <h4>Roads</h4>
-<p>Highways make up much of the night lights seen from space (see
-Google’s <a href="https://earth.google.com/web/@27.44405464,-84.7693044,206.63660162a,8916361.52264659d,35y,0h,0t,0r/data=CiQSIhIgMGY3ZTJkYzdlOGExMTFlNjk5MGQ2ZjgxOGQ2OWE2ZTc">Earth
+<p>One issue with night light data is that light pollution can interfere
+with detecting patterns of interest. Highways make up much of the night
+lights seen from space (see Google’s <a href="https://earth.google.com/web/@27.44405464,-84.7693044,206.63660162a,8916361.52264659d,35y,0h,0t,0r/data=CiQSIhIgMGY3ZTJkYzdlOGExMTFlNjk5MGQ2ZjgxOGQ2OWE2ZTc">Earth
 at Night</a>). Therefore, it is important to minimize falsely
 identifying areas with reduced traffic as areas without power. <a href="https://planet.openstreetmap.org/">OpenStreetMap (OSM)</a> is a
 collaborative project which creates publicly available geographic data
@@ -568,8 +596,7 @@ that <code>sf</code> can use.</p>
 <h5>combine the data</h5>
 <p>First, I read in the night lights tiles data and combining them into
 a single <code>stars</code> object for each date (2021-02-07 and
-2021-02-16)<br />
-</p>
+2021-02-16).</p>
 <pre class="r"><code>#reading in raster data 
 t1 = read_stars(file.path(data, &quot;VNP46A1/VNP46A1.A2021038.h08v05.001.2021039064328.tif&quot;))
 t2 = read_stars(file.path(data,&quot;VNP46A1/VNP46A1.A2021038.h08v06.001.2021039064329.tif&quot;))
@@ -603,7 +630,8 @@ light_diff[light_diff &lt; 200] = NA
 <div id="vectorize-the-mask" class="section level5">
 <h5>vectorize the mask</h5>
 <p>I vectorized the the blackout mask and fixed any invalid geometries
-using <code>st_make_valid</code></p>
+using <code>st_make_valid</code>. I then inspected it to make sure it
+was an sf object and to look at its characteristics.</p>
 <pre class="r"><code>#creating a black out mask as a sf object. This creates a mask of geometries that experienced a black out
 bo_mask &lt;- st_as_sf(light_diff)
 
@@ -660,17 +688,19 @@ cat(&quot;CHECK #1 - see if raster data is masked within Houston:&quot;, &quot;\
 </div>
 <div id="exclude-highways-from-blackout-mask" class="section level5">
 <h5>exclude highways from blackout mask</h5>
-<p>The roads geopackage includes data on roads other than highways.
-However, we can avoid reading in data we don’t need by taking advantage
-of <code>st_read</code>’s ability to subset using a SQL query.</p>
-<p>First I defined a SQL query:
-<code>query &lt;- &quot;SELECT * FROM gis_osm_roads_free_1 WHERE fclass=&#39;motorway&#39;&quot;</code>
-which I applied to <code>st_read</code> to load just highway data from
+<p>The roads geopackage provoded includes data on roads other than
+highways. However, we can avoid reading in data we don’t need by taking
+advantage of <code>st_read</code>’s ability to subset using a SQL query.
+This allows us to save comutational energy by just pulling in relevant
+data we want.</p>
+<p>First I defined a SQL query:</p>
+<p><code>query &lt;- &quot;SELECT * FROM gis_osm_roads_free_1 WHERE fclass=&#39;motorway&#39;&quot;</code></p>
+<p>I applied to <code>st_read</code> to load just highway data from
 geopackage. I then reprojected the data to EPSG:3083 and identified
 areas within 200m of all highways using <code>st_buffer</code> and
-dissolved them with <code>st_union</code>. Laslty, I find areas that
+dissolved them with <code>st_union</code>. Lastly, I find areas that
 experienced blackouts that are further than 200m from a highway through
-sspatial subsetting using the <code>st_disjoint</code> operation.</p>
+spatial subsetting using the <code>st_disjoint</code> operation.</p>
 <pre class="r"><code>#assigning a query that pulls highway roads
 highway_query &lt;- &quot;SELECT * FROM gis_osm_roads_free_1 WHERE fclass=&#39;motorway&#39;&quot;
 
@@ -710,12 +740,14 @@ cat(&quot;CHECK #2 - see if the highway exclusion mask removed all polygons with
 <h4>Find homes impacted by blackouts</h4>
 <div id="load-buildings-data" class="section level5">
 <h5>load buildings data</h5>
-<p>Buildings dataset was loaded in using <code>st_read</code> and the
-following SQL query:</p>
+<p>The buildings dataset was then loaded in using <code>st_read</code>
+and the following SQL query:</p>
 <p><code>SELECT *</code>  <code>FROM gis_osm_buildings_a_free_1</code>
 <code>WHERE (type IS NULL AND name IS NULL)</code>
 <code>OR type in (&#39;residential&#39;, &#39;apartments&#39;, &#39;house&#39;, &#39;static_caravan&#39;, &#39;detached&#39;)</code><br />
 </p>
+<p>Again, this reduces the amount of data pulled inoto R, saving us
+time, energy, and storage.</p>
 <pre class="r"><code>#making a query for pulling specific building data
 buildings_query &lt;- &quot;SELECT * FROM gis_osm_buildings_a_free_1 WHERE (type IS NULL AND name IS NULL) OR type in (&#39;residential&#39;, &#39;apartments&#39;, &#39;house&#39;, &#39;static_caravan&#39;, &#39;detached&#39;)&quot;
 
@@ -730,8 +762,8 @@ buildings &lt;- st_transform(buildings, 3083)
 </div>
 <div id="find-homes-in-blackout-areas" class="section level5">
 <h5>find homes in blackout areas</h5>
-<p>I then filtered to homes within blackout areas and counted he number
-of impacted homes.</p>
+<p>I then filtered the mask to homes within blackout areas and counted
+the number of impacted homes.</p>
 <pre class="r"><code>#subsettign the number of homes experiencing blackouts 
 #I am including areas inside of houston that also extend outside of Houston border using st_intersects
 bo_homes &lt;- buildings[mask_no_hwy, ]
@@ -810,8 +842,8 @@ cat(&quot;CHECK #3 - making sure only census tracts with homes that experienced 
 <h5>compare incomes of impacted tracts to unimpacted tracts</h5>
 <p>Finally, I created a map of median income by census tract and
 designated which tracts experienced blackouts. I then plot the
-distribution of income in impacted and unimpacted tracts to visualize
-what the spread of the communnity income looked like.</p>
+distribution of income in impacted and nonimpacted tracts to visualize
+what the spread of the community income looked like.</p>
 <pre class="r"><code># In this section, I am mapping the median income of affected census tracts from the black out to visually show what the income of affected areas are in Houston
 
 #check census tract crs
@@ -963,6 +995,12 @@ to strengthen the results found in this study.</strong></p>
 <ol>
 <li id="fn1"><p>Wikipedia. 2021. “2021 Texas power crisis.” Last
 modified October 2, 2021. <a href="https://en.wikipedia.org/wiki/2021_Texas_power_crisis" class="uri">https://en.wikipedia.org/wiki/2021_Texas_power_crisis</a>.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Hess, D. B. (2005). Access to employment for adults in
+poverty in the Buffalo-Niagara region. Urban Studies, 42(7),
+1177-1200.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Li, Z., Li, X., Wang, Y., &amp; Quiring, S. M. (2019).
+Impact of climate change on precipitation patterns in Houston, Texas,
+USA. Anthropocene, 25, 100193.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
